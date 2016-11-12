@@ -20,7 +20,6 @@ CLIENT_SECRETS_FILE = "client_secret.json"
 YOUTUBE_READONLY_SCOPE = "https://www.googleapis.com/auth/youtube.readonly"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-broadcastName = "Prueba"
 
 
 MISSING_CLIENT_SECRETS_MESSAGE = """
@@ -45,34 +44,30 @@ def get_authenticated_service(args):
 # Retrieve a list of the liveStream resources associated with the currently
 # authenticated user's channel.
 def list_streams(youtube,stream_id):
-  print "Live streams:"
-
-  list_streams_request = youtube.liveStreams().list(
+  
+  stream = youtube.liveStreams().list(
     part="snippet, cdn",
-    id= stream_id, 
+    id= stream_id, #recupero solo el id que me interesa
     maxResults=50
-  )
+  ).execute()
 
-  while list_streams_request:
-    list_streams_response = list_streams_request.execute() #items array de eventos 
-
-    stream_key = list_streams_response["items"][0]["cdn"]["ingestionInfo"]["streamName"]
-    print("Este es tu Stream Key" + stream_key)
-    outfile = open('ffmpeg.sh', 'a+') 
-    outfile.write("/" + stream_key)
-    outfile.close()
-    os.system("chmod 0755 ffmpeg.sh")
-    os.system("./ffmpeg.sh")
-    
-    
-    list_streams_request = youtube.liveStreams().list_next(
-      list_streams_request, list_streams_response)
+  stream_key = stream["items"][0]["cdn"]["ingestionInfo"]["streamName"]
+  print("Este es tu Stream Key" + stream_key)
+  outfile = open('ffmpeg.sh', 'a+') 
+  outfile.write("/" + stream_key)
+  outfile.close()
+  os.system("chmod 0755 ffmpeg.sh")
+  os.system("./ffmpeg.sh")
+  
 
 if __name__ == "__main__":
   argparser.add_argument("--stream-id") 
   args = argparser.parse_args()
   youtube = get_authenticated_service(args)
   try:
-    list_streams(youtube,args.stream_id)
+    list_streams(youtube,"SZvq_huJb9LOJXRK0YqEDA1478945098060469")
   except HttpError, e:
     print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
+  except IndexError:
+    #Error que se puede dar al buscar un stream key que no exista
+    print "No livestream with this Stream Key"
