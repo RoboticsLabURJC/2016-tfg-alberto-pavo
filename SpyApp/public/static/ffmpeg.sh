@@ -1,0 +1,3 @@
+ffmpeg -f alsa -i default -ac 2 -f video4linux2 -i /dev/video0 -vcodec libx264 /
+-vf drawtext="fontfile=/usr/share/fonts/truetype/freefont/FreeSerif.ttf: fontsize=24: fontcolor=yellow: textfile=sub.txt:reload=1:x=100: y=50: " /
+-f flv -r 15 -q 3 -b:v 320k -s 320x240 -acodec libmp3lame -ar 44100 -ab 128k -threads 0 -bufsize 64k -force_key_frames 0:00:01 /rtmp://a.rtmp.youtube.com/uw67-5tk0-qcpr-68ut

@@ -1,0 +1,21 @@
+<!doctype html>
+<html ng-app="app">
+   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/subtitlesStyle.css">
+    <script src="app.js"></script>
+  </head>
+  <body ng-controller ="subtitlesController">
+    <div ng-include = "'static/navbar.html'"></div>
+    <h1>Write here your text</h1>
+    <div>
+    	<form name = "subtitles">
+        <div class= "container">
+    		  <input type = "text" name="subtitles" ng-model="subText.subtitles" />
+    		  <input type="submit" value="Submit" ng-click="sendSubtitles()">
+        </div>
+    	</form>
+    </div>
+    <p> {{response}} </p>
+  </body>
+</html>
