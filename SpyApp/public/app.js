@@ -10,7 +10,6 @@ var app = angular.module('app', []);
       if(video.length > 0){
         var iframe = document.createElement("iframe")
         //Extract iframe src
-        console.log(video.substring(video.indexOf('src=') + 5 ,video.indexOf('frameborder') - 2) )
         iframe.src = video.substring(video.indexOf('src=') + 5 ,video.indexOf('frameborder') - 2) 
         var div = document.getElementById("videoContainer");
         div.appendChild(iframe);
