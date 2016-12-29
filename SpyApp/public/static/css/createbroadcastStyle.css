@@ -1,9 +1,9 @@
 body{
-   background: #CCFFCC
+   background: #848484;
 }
 
 form {
-    border: 3px solid black;
+    border: 3px solid #1a75ff;
     width: 50%;
     margin: auto;
     margin-top: 3%;
@@ -36,4 +36,11 @@ button {
     padding: 5px;
     margin: auto;
     text-align: left;
+}
+
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
 }

@@ -2,21 +2,25 @@
 <html ng-app="app">
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-cookies.js"></script>
     <link rel="stylesheet" type="text/css" href="static/css/indexStyle.css">
     <script src="app.js"></script>
   </head>
-  <body>
-  		<div ng-include = "'static/navbar.html'"></div>
+  <body ng-controller = "indexController">
+  		<div ng-include = setNavbar ></div>
   		<img src="/static/images/spy.png"/>
-  		<div ng-controller = "indexController" class="container">
-  			<table>
+  		<div  class="container">
+  			<table >
   				<tr>
-            <td> <h2> TITULO </h2> </td>
+            <th>Title</th>
+            <th> Video</th>
           </tr>	
-          <tr>
-            <td> VIDEO <td>
+          <tr ng-repeat="video in videos">
+            <td>{{video.title}}</td>
+            <td><div id= "videoContainer"> {{addVideo(video.monitor)}}</div></td>
           </tr>
   			</table>	
+        <p class="error">{{msg}}</p>
   		</div>
   </body>
 </html>

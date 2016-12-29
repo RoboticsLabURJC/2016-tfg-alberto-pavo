@@ -97,7 +97,5 @@ if __name__ == "__main__":
     stream_id = insert_stream(youtube,args)
     bind_broadcast(youtube, broadcast_id, stream_id)
     print ("Evento Creado")
-  except HttpError, e:
-    print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
   except :
-   print ("error")
+   print ("ERROR")

@@ -8,11 +8,14 @@ var server = express();
 var bodyParser=require("body-parser");
 var youtube = require('./public/youtube-controller')
 
+
 server.use(bodyParser.json());
 server.use(session({secret: '53CR37CL13N7',resave: true,saveUninitialized: true}));
-//server.use("/createbroadcast",security.middleware) //para esta ruta usa seguridad si deja pasar va al get
-//server.use("/streams",security.middleware) //para esta ruta usa seguridad si deja pasar va al get 
 
+//Middleware
+server.use("/createbroadcast",security.middleware) //para esta ruta usa seguridad si deja pasar va al get
+server.use("/streams",security.middleware) //para esta ruta usa seguridad si deja pasar va al get 
+server.use("/subtitles",security.middleware)
 
 
 server.use(express.static(path.join(__dirname, 'public')));
@@ -22,7 +25,7 @@ server
   		res.sendFile(path.join(__dirname + '/public/index.html'));
 	})
 	.get('/videolist', function (req, res){
-  		youtube.retrieveStreamList(req,res,"active")
+  		youtube.retrieveStreamList(req,res,"upcoming")
 	})
 	.get('/createbroadcast', function (req, res, next) {
   		res.sendFile(path.join(__dirname + '/public/createBroadcast.html'));
@@ -31,7 +34,7 @@ server
 		youtube.createEvent(req,res);
 		
 	})
-	.get('/login', function (req,res, next){
+	.get('/login', function (req,res){
 		res.sendFile(path.join(__dirname + '/public/login.html'));
 	})
 	.post('/login', function(req,res,next){ 
@@ -40,17 +43,20 @@ server
 	.get('/streams', function (req,res){
 		res.sendFile(path.join(__dirname + '/public/stream_list.html'));
 	})
-	.get('/streamlist', function (req,res){
+	.get('/streamlist', function (req,res,next){
 		youtube.retrieveStreamList(req,res,"upcoming")
 	})
 	.post('/startstreaming', function (req,res){
 		youtube.startStreaming(req,res)
 	})
-	.get('/subtitles', function (req,res){
+	.get('/subtitles', function (req,res,next){
 		res.sendFile(path.join(__dirname + '/public/subtitles.html'));
 	})
 	.post('/subtitles', function (req,res){
 		youtube.addSubtitles(req,res)
+	})
+	.get('/logout',function(req,res){
+		security.logout(req,res)
 	})
 
 

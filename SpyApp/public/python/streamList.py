@@ -12,7 +12,6 @@ from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
 
-
 CLIENT_SECRETS_FILE = "./private/client_secret.json"
 
 # This OAuth 2.0 access scope allows for read-only access to the authenticated
@@ -44,9 +43,9 @@ def get_authenticated_service(args):
   return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
     http=credentials.authorize(httplib2.Http()))
 
-def list_broadcasts(youtube,status):
 
-  
+#Build JSON that contents broadcast and stream information
+def list_broadcasts(youtube,status):
 
   list_broadcasts_request = youtube.liveBroadcasts().list(
     broadcastStatus= status,
@@ -61,14 +60,15 @@ def list_broadcasts(youtube,status):
       title = broadcast["snippet"]["title"]
       monitorStream = broadcast["contentDetails"]["monitorStream"]["embedHtml"]
       stream_id = broadcast["contentDetails"]["boundStreamId"]
-      stream_key = getStreamKey(youtube,stream_id)
-      data_output["data"].append({"title" : title , "streamkey" : stream_key, "monitor": monitorStream})
+      cdn = getStreamKey(youtube,stream_id)
+      data_output["data"].append({"title" : title , "streamkey" : cdn["ingestionInfo"]["streamName"],
+                                  "monitor": monitorStream, "quality" : cdn["format"] })
 
     list_broadcasts_request = youtube.liveBroadcasts().list_next(list_broadcasts_request, broadcast_response)
 
   
 
-# Retrieve a list of the liveStream resources
+# Retrieve a livestream resource match with stream_id
 def getStreamKey(youtube,stream_id):
 
   list_streams_request = youtube.liveStreams().list(
@@ -77,7 +77,7 @@ def getStreamKey(youtube,stream_id):
     maxResults=1
   )
   list_streams_response = list_streams_request.execute()
-  return list_streams_response["items"][0]["cdn"]["ingestionInfo"]["streamName"]
+  return list_streams_response["items"][0]["cdn"]
 
 if __name__ == "__main__":
   argparser.add_argument("--status")
@@ -86,5 +86,5 @@ if __name__ == "__main__":
   try:
     list_broadcasts(youtube,args.status)
     print  json.dumps(data_output)
-  except HttpError, e:
-    print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
+  except :
+    print "ERROR"

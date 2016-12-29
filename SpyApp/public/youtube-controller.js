@@ -1,10 +1,12 @@
 var spawn = require('child_process').spawn;
 var fs=require('fs');
+var encoder = require("./static/encoderConfiguration.js")
 
 
 exports.createEvent =  function(req,res){
 
 	arg = JSON.stringify(req.body)
+
 	var process = spawn('python',['./public/python/createEvent.py', '--dataBr' , arg]);
 	processOutput(res,process);
 }
@@ -17,15 +19,17 @@ exports.retrieveStreamList =  function(req,res,status){
 
 exports.startStreaming = function(req,res){
 	arg = req.body
-	var process = spawn('python',['./public/python/startStream.py', arg.streamkey]);
-	processOutput(res,process);
+	//return a map with encoder configuration
+	res.end("Broadcast Started")
+	var encoderSettings = encoder.getConfig(arg.quality)
+	var process = spawn('python',['./public/python/startStream.py', arg.streamkey,encoderSettings.resolution,encoderSettings.bitrate]);
 }
 
 exports.addSubtitles = function(req,res){
 	msg = req.body.subtitles
 	fs.writeFile('./public/static/subtitles.txt', msg ,  function(err) {
    		if (err) {
-    		res.end("ERROR");
+    		res.status(500).end();
     		return;
    		}
    		res.end("Write Succesfull")
@@ -44,10 +48,14 @@ function processOutput(res,process){
 	
 	process.stdout.on("end",function(){
 
-		if(typeof py_data !== "undefined"){
-			py_data = py_data.substring(9);
-			console.log(py_data)
-  	 		res.end(py_data)
+	if(typeof py_data !== "undefined"){
+      py_data = py_data.substring(9);
+      console.log(py_data)
+      if(py_data.localeCompare("ERROR") == 1){
+        res.status(500).end();
+      }else{
+  	 	  res.end(py_data)
+      }
 		}	
 	})
 
@@ -56,12 +64,10 @@ function processOutput(res,process){
 	})
 
 	process.stderr.on("end",function(){
-
+    
 		if(typeof py_err !== 'undefined'){
-			res.end("ERROR")
+			res.status(500).end()
   			console.log("Python Error: " + py_err)
 		}	
 	})
 }
-
-

@@ -1,5 +1,5 @@
 body{
-   background: #CCFFCC;
+   background: #848484;
 }
 
 h1{
@@ -8,7 +8,7 @@ h1{
 }
 
 form {
-    border: 3px solid black;
+    border: 3px solid #1a75ff;
     width: 50%;
     margin: auto;
     
@@ -39,4 +39,9 @@ button {
     margin: auto;
     text-align: center
 }
-
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
+}

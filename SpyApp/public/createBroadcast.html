@@ -6,7 +6,7 @@
     <script src="app.js"></script>
   </head>
   <body>
-    <div ng-include = "'static/navbar.html'"></div>
+    <div ng-include = "'static/logNavbar.html'"></div>
     <div class="container" ng-controller="broadcastController">
      
     <form name="data_provider">
@@ -40,9 +40,7 @@
   </form>
 
   </div>
-       <p>
-          {{msg}}
-        </p>
+       <p class="error">{{msg}}</p>
     </div>
   </body>
 </html>

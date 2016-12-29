@@ -2,11 +2,12 @@
 <html ng-app="app">
    <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-cookies.js"></script>
     <link rel="stylesheet" type="text/css" href="static/css/subtitlesStyle.css">
     <script src="app.js"></script>
   </head>
   <body ng-controller ="subtitlesController">
-    <div ng-include = "'static/navbar.html'"></div>
+    <div ng-include = "'static/logNavbar.html'"></div>
     <h1>Write here your text</h1>
     <div>
     	<form name = "subtitles">
@@ -16,6 +17,6 @@
         </div>
     	</form>
     </div>
-    <p> {{response}} </p>
+    <p class="error"> {{response}} </p>
   </body>
 </html>

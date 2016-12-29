@@ -2,23 +2,28 @@ var sess;
 
 exports.middleware = function(req,res,next){
   sess = req.session
-  if(sess.auth){ //server.use(/createBroadcast, function())
-      console.log("usuario valido")
-      next(); //si esta loggeado le dejo pasar
+  if(sess.auth){
+      next(); //if log ok ==> continue
   } else{
-     console.log("no valido")
-     res.redirect("/login") //si no esta loggeado le redirijo al login
+     console.log("Incorrect User")
+     res.redirect("/login")
 
   }
 }
 
 exports.login = function(req,res,session,config){  
-  console.log(config.admin.name + " " + config.admin.password)
+  
   if(req.body.user == config.admin.name && req.body.password == config.admin.password){
      sess = req.session;
+     console.log("Right User : session started")
      sess.auth = "true";
-     res.end("usuario valido")
+     res.end("Right user")
   } else{
-    res.end("User or Password Error");
+    res.status(400).end("User or Password Error");
   }
+}
+
+exports.logout = function(req,res){
+  req.session.destroy();
+  res.redirect("/login")
 }

@@ -19,3 +19,10 @@ th, td {
     margin: auto;
     text-align: center
 }
+
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
+}

@@ -1,5 +1,5 @@
 body{
-   background: #CCFFCC;
+   background: #848484;
 }
 
 h1{
@@ -39,4 +39,11 @@ button {
     padding: 5px;
     margin: auto;
     text-align: center
+}
+
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
 }
