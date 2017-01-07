@@ -1,0 +1,47 @@
+body{
+   background: #848484;
+}
+
+h1{
+  text-align: center;
+  margin-top : 10%;
+}
+
+form {
+    border: 3px solid #1a75ff;
+    width: 50%;
+    margin: auto;
+    
+    
+}
+
+input[type=text], input[type=password] {
+    width: 50%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+}
+
+.container {
+    padding: 5px;
+    margin: auto;
+    text-align: center
+}
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
+}

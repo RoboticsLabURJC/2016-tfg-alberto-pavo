@@ -1,0 +1,46 @@
+body{
+   background: #848484;
+}
+
+form {
+    border: 3px solid #1a75ff;
+    width: 50%;
+    margin: auto;
+    margin-top: 3%;
+    padding-left: 3%;
+    
+    
+}
+
+input {
+    width: 50%;
+    padding: 12px 20px;
+    text-align: center;
+    margin: 8px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+}
+
+.container {
+    padding: 5px;
+    margin: auto;
+    text-align: left;
+}
+
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
+}

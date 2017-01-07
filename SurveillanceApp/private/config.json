@@ -1,0 +1,11 @@
+{
+  "admin":{
+    "name":"user",
+    "password": "123"
+  },
+  
+  "server": {
+    "IP":"X.X.X.X.X",
+    "PORT":"8443"
+  }
+}
