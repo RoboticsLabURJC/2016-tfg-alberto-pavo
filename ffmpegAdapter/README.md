@@ -1,4 +1,4 @@
-Color filter excercise
+Ffmpeg adapter to JdeRobot
 ==============
 
 In a terminal launch cameraserver component:
