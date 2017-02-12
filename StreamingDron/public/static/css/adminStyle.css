@@ -1,0 +1,101 @@
+body{
+   background: #848484;
+}
+
+form {
+    border: 3px solid #1a75ff;
+    width: 70%;
+    margin: auto;
+    margin-top: 3%;
+    padding-left: 3%;  
+}
+
+input {
+    width: 50%;
+    padding: 12px 20px;
+    text-align: center;
+    margin: 8px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+input[type="submit"]{
+	width: 30%;
+    padding: 12px 20px;
+    text-align: center;
+    margin: 8px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+button {
+    width: 30%;
+    padding: 12px 20px;
+    text-align: center;
+    margin: 8px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.container_data {
+    padding: 5px;
+    margin: auto;
+    text-align: left;
+}
+
+.error{
+    text-align: center;
+    color: red;
+    font-size: 150%;
+    font-weight: bold;
+}
+
+h1{
+  text-align: center;
+  margin-top : 5%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 3px solid #ddd;
+}
+
+#subtitles {
+
+    width: 90%;
+    height: 70px;
+    padding: 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+}
+
+.container{
+    padding: 5px;
+    margin: auto;
+    text-align: center
+}
+
+.modal {
+  display: block;
+}
+
+.modalBtn{
+    width: 100%;
+    padding: 12px 20px;
+    text-align: center;
+    margin: 8px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: red;
+}
