@@ -23,6 +23,7 @@ exports.startStreaming = function(req,res){
 	res.end("Broadcast Started")
 	var encoderSettings = encoder.getConfig(arg.quality)
 	var process = spawn('python',['./public/python/startStream.py', arg.streamkey,encoderSettings.resolution,encoderSettings.bitrate]);
+processOutput(res,process);
 }
 
 exports.addSubtitles = function(req,res){
