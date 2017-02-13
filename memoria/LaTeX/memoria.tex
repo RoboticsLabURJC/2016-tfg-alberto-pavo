@@ -1,0 +1,57 @@
+\documentclass[oneside,a4paper,12pt]{book}
+
+\usepackage[lmargin=2.8cm, rmargin=2.8cm, tmargin=3.3cm, bmargin=3.3cm]{geometry}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+
+\usepackage{minted}
+\usemintedstyle{borland}
+
+\graphicspath{ {img/} }
+
+\renewcommand{\baselinestretch}{1}
+
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{gray}{rgb}{.4,.4,.4}
+
+\lstdefinelanguage{JSON}{
+    string=[s]{"}{"},
+    stringstyle=\color{blue},
+    comment=[l]{:},
+    commentstyle=\color{red}  
+}
+
+\lstdefinelanguage{JavaScript}{
+  backgroundcolor = \color{backcolour},
+  keywords={typeof, function, var, if},
+  keywordstyle=\color{red}\bfseries,
+  comment=[l]{//},
+  commentstyle=\color{gray}\ttfamily
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+    language = JSON,
+    backgroundcolor = \color{backcolour},
+    basicstyle=\footnotesize\ttfamily,
+    showstringspaces=false,
+    showspaces=false,
+    frame=single,
+    tabsize=2,
+    breaklines=true,
+    showtabs=false,
+    captionpos=b
+}
+
+\begin{document}
+
+\include{Tecnologia}
+
+\end{document}

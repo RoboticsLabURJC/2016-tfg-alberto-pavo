@@ -1,0 +1,32 @@
+\chapter{Planificación}
+
+A continuación se presentan los objetivos del trabajo así como las distintas etapas por las que se ha pasado en su desarrollo.
+\section{Objetivos}
+
+El objetivo final del trabajo consiste en crear dos aplicaciones. La primera es en una aplicación web que usando el API de YouTube pueda manejar e iniciar la retransmisión de eventos. La segunda consiste en retransmitir a través de YouTube las imágenes captadas por con las herramientas de JdeRobot.
+
+Una vez planteado el objetivo final el trabajo se puede dividir en cuatro subojetivos.
+
+\begin{enumerate}
+    \item \textbf {Manejo de eventos a través del API YouTube} este punto trataba de comprender la tecnología que google nos prestaba para poder manejar “live streamming” sin necesidad de acceder a la plataforma virtual de YouTube. Una vez comprendida, el objetivo de esta parte fue conseguir crear eventos y comenzar su retransmisión usando el API, que será explicado posteriormente.
+    \item \textbf {Búsqueda tecnología de retransmisión} ,  una vez controlado el aspecto del API necesitábamos una tecnología compatible con ella para poder hacer la retransmisión, para lo cual se eligió ffmpeg, ya que nos permitía manipularla fácilmente a través de scripts compatibles con el API. Por otro lado para conseguir retransmitir a partir de JdeRobot a parte de ffmpeg  se facilita otra alternativa Open Broadcaster Software (OBS) que sera explicado mas adelante.
+    \item \textbf {Aplicación Web} , una vez conseguidos los dos puntos anteriores, el objetivo es desarrollar una aplicación web que junte ambos.
+    \item \textbf {JdeRobot} como último objetivo se propone desarrollar un driver capaz de retransmitir a través de YouTube las imágenes captadas por un dron usando las herramientas de JdeRobot.
+    
+\end{enumerate}
+
+\section{Plan de trabajo}
+
+El plan de trabajo seguido ha sido dividir los grandes objetivos en pequeños hitos, de forma que se ha podido realizar un  continuo desarrollo y avance. Estos hitos se encuentran reflejados en un mediawiki \footnote{http://jderobot.org/Apavo-tfg}  apoyado también por un repositorio de github \footnote{https://github.com/RoboticsURJC-students/2016-tfg-alberto-pavo}.
+
+A continuación se presentan los hitos en orden cronológico:
+
+\begin{itemize}
+    \item Estudio de las tecnologías de YouTube y sus posibilidades de live streamming.
+    \item Aprendizaje y desarrollo con la API de YouTube usando como lenguaje de programación Python.
+    \item Estudio de herramientas de retransmisión de vídeo compatibles con YouTube.
+    \item Aprendizaje y uso de ffmpeg y OBS.
+    \item Creación aplicación web capaz de capturar el flujo de audio y vídeo de una cámara web y retransmitirlo a través  YouTube en tiempo real.
+    \item Creación aplicación web capaz de retransmitir a través de un evento en vivo de YouTube un flujo multimedia capturado por las herramientas de JdeRobot.
+
+\end{itemize}
