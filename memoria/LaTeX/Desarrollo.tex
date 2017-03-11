@@ -42,42 +42,42 @@ A continuación se incluye un fragmento de código donde se puede ver el uso del
 
 exports.retrieveStreamList =  function(req,res,status){
 
-	var process = spawn('python',['./public/python/streamList.py', ' --status' , status]);
-	processOutput(res,process);
+    var process = spawn('python',['./public/python/streamList.py', ' --status' , status]);
+    processOutput(res,process);
 }
 
 function processOutput(res,process){
 
-	var py_data;
-	var py_err;
-	
-	process.stdout.on("data",function(data){
-  			py_data += data; 
-	})
-	
-	process.stdout.on("end",function(){
+    var py_data;
+    var py_err;
+    
+    process.stdout.on("data",function(data){
+            py_data += data; 
+    })
+    
+    process.stdout.on("end",function(){
 
-	if(typeof py_data !== "undefined"){
+    if(typeof py_data !== "undefined"){
       py_data = py_data.substring(9);
       console.log(py_data)
       if(py_data.localeCompare("ERROR") == 1){
         res.status(500).end();
       }else{
-  	 	  res.end(py_data)
+          res.end(py_data)
       }
-		}	
-	})
+        }   
+    })
 
-	process.stderr.on("data", function(data){
-  		py_err += data;
-	})
-	process.stderr.on("end",function(){
+    process.stderr.on("data", function(data){
+        py_err += data;
+    })
+    process.stderr.on("end",function(){
     
-		if(typeof py_err !== 'undefined'){
-			res.status(500).end()
-  			console.log("Python Error: " + py_err)
-		}	
-	})
+        if(typeof py_err !== 'undefined'){
+            res.status(500).end()
+            console.log("Python Error: " + py_err)
+        }   
+    })
 }
 
 \end{lstlisting}
@@ -234,11 +234,11 @@ A continuación nos encontramos con el método que lleva a cabo el proceso de au
     \begin{lstlisting}[language = Python]
     
     def stop_broadcast(youtube,brID):
-    	broadcast_request = youtube.liveBroadcasts().transition(
+        broadcast_request = youtube.liveBroadcasts().transition(
         broadcastStatus= "complete",
         id = brID,
         part = "status")
-    	broadcast_request.execute()
+        broadcast_request.execute()
     
     \end{lstlisting}
     
@@ -395,10 +395,118 @@ La aplicación es mas sencilla que su predecesora SurveillanceApp en cuanto al m
 
 Para dar paso al desarrollo de la aplicación es necesario saber que esta se divide en dos interfaces, una pública y otra privada. Dentro de la interfaz pública se muestra la reproducción de los eventos asociados al canal que se encuentran en directo en ese momento, si es que los hubiera. Para mostrarlos se hace uso del método list tanto del recurso de liveBroadcast como de liveStream suministrándole como filtros el estado del evento que en este caso sera activo, dicho código se encuentra explicado en la sección de SurveillanceApp.
 
-**********************IMAGEN INTERFAZ 1 ************************
-
 Por otro lado nos encontramos con una interfaz privada, dicha privacidad es debido a que la aplicación maneja datos sensibles relacionados con la cuenta de Google del administrador de la aplicación. De nuevo se ha reutilizado el mecanismo de seguridad de SurveillanceApp consistente en un middleware y un posterior establecimiento de sesión. Una vez superado el proceso de identificación correctamente accedemos a una interfaz en la cual podremos comenzar la retransmisión de nuestros eventos.
 
-************Interfaz 2****************************
+ 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=150mm]{privateSD.PNG}
+        \caption{Interfaz Privada}
+    \end{figure}
 
-Para ello sera necesario proporcionarle a la aplicación un stream key, es decir el identificador del stream en los servidores de YouTube, dicho identificador esta accesible en la pagina del YouTube una vez hemos creado nuestro evento, adicionalmente se necesita proporcionar la calidad el evento para poder configurar correctamente ffmpeg. Una vez el identificador es recogido por el servidor, este ejecuta un script de python en el cual el comando de ffmpeg es escrito en un fichero para su posterior ejecución. Una vez ffmpeg esta retransmitiendo, esta interfaz nos ofrece dos opciones detener el evento y ffmpeg a su vez y por otro lado añadir subtítulos al vídeo, ambas opciones son implementadas en SurveillanceApp. 
+
+Iniciar un evento implica la ejecución de nuestro adaptador de ffmpeg a JdeRobot así como el propio ffmpeg, para dicho trabajo se ha usado un script de python el cual genera un hilo de ejecución paralelo al principal que se encarga del adaptador mientras el hilo principal ejecuta ffmpeg.
+
+\\
+\begin{lstlisting}[language=Python]
+
+def list_streams(path,stream_key,resolution,bitrate):
+  
+  command ='ffmpeg -f alsa -ac 2 -i default -f image2 -framerate 15 -loop 1 -i ' + path + ' -vcodec libx264 -preset veryfast -minrate ' + bitrate  + ' -maxrate 1000k -bufsize 1000k -vf "format=yuv420p"  -g 30 -vf drawtext="fontfile=/usr/share/fonts/truetype/freefont/FreeSerif.ttf:fontsize=24:fontcolor=yellow:textfile=./public/static/subtitles.txt:reload=1:x=100:y=50" -c:a libmp3lame -b:a 128k -ar 44100 -force_key_frames 0:00:04 -f flv rtmp://a.rtmp.youtube.com/live2/'+ stream_key
+  os.system(command)
+  
+if __name__ == "__main__":
+  try:
+    subProcess = Popen(['python3','./public/JdeRobot/ffmpegAdapter/ffmpeg-adapter.py', '--Ice.Config=./public/JdeRobot/ffmpegAdapter/adapter_conf.cfg'])
+    list_streams(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+  except:
+    print("ERROR")
+    
+\end{lstlisting}
+
+Después de que ffmpeg haya comenzado la retransmisión del evento con éxito, desde el interfaz web podremos añadir subtítulos a nuestra emisión así como dar por finalizado nuestro evento, de forma que acabaremos con el proceso de ffmpeg. 
+
+\subsection{Experimentos}
+
+Todas estas herramientas han sido desarrolladas con el objetivo final de ejecutarlas junto con un UAV real por ello una vez desarrollados todos los componentes se pasa a la fase de experimentación. Esta fase a su vez se divide en dos partes la simulación y la prueba real.
+
+Debido a que los UAV son aparatos costosos no se puede experimentar con ellos directamente sin antes pasar por un periodo de simulación, de dicha simulación se encargara Gazebo del que ya hablamos en el capitulo de introducción. Actualmente disponemos de distintos escenarios de simulación compatibles con JdeRobot.Además de Gazebo nos apoyaremos en UAViewer para teleoperar el Dron.Los escenarios de Gazebo simulan  un UAV que posee los cuatro interfaces que manejamos en JdeRobot proporcionados por el arDroneServer(todas estas herramientas están explicadas en el capitulo 3), para nuestro adaptador únicamente necesitamos la interfaz Camera pero para el manejo del Dron si necesitaremos los demás interfaces.
+
+  \begin{figure}[H]
+        \centering
+        \includegraphics[width=150mm]{expGazebo.PNG}
+        \caption{Arquitectura Experimento}
+    \end{figure}
+
+Para conectar Gazebo con nuestro adaptador y poder recuperar las imágenes proporcionadas por la cámara, únicamente se debe configurar el fichero "adapter\_conf.cfg", con la ip y el puerto correcto donde Gazebo se esta ejecutando, una vez conectado a través de ffmpeg, OBS o la aplicación web se comienza la retransmisión hacia Youtube del contenido captado por el UAV.
+La ejecución de este experimento puede verse en la wiki oficial del proyecto \footnote{http://jderobot.org/Apavo-tfg#YouTube_.26_JdeRobot}
+
+\subsubsection{Experimentos con Drone real}
+
+Una vez testeada con éxito la aplicación en un entorno simulado se puede proceder a realizar las pruebas con el drone real.Para el experimento usaremos el modelo Ar Drone fabricado por la marca Parrot y proporcionado por el equipo de robótica de la URJC, dicho dron es un cuadricoptero totalmente compatible con las herramientas de JdeRobot.
+
+  \begin{figure}[H]
+        \centering
+        \includegraphics[width=150mm]{arDrone.png}
+        \caption{arDrone de Parrot}
+    \end{figure}
+
+Para realizar las pruebas nos apoyaremos en el arDrone server como forma de conexión con el aparato y en UAViewer para el manejo del dron.Por otro lado para nuestro adaptador y posterior comunicación con YouTube únicamente recuperaremos el interfaz de la cámara, como en el experimento del simulador.
+
+ArDrone server posee un fichero de configuración que podemos ver a continuación, en el se encuentran detallados en que dirección ip y puerto se esta recibiendo información de cada uno de los interfaces así como los nombre que toman estos.
+
+\begin{lstlisting}
+
+ArDrone.Camera.Endpoints=default -h 0.0.0.0 -p 9999
+ArDrone.Camera.Name=ardrone_camera
+ArDrone.Camera.FramerateN=15
+ArDrone.Camera.FramerateD=1
+ArDrone.Camera.Format=RGB8
+ArDrone.Camera.ArDrone2.ImageWidth=640
+ArDrone.Camera.ArDrone2.ImageHeight=360
+ArDrone.Camera.ArDrone1.ImageWidth=320
+ArDrone.Camera.ArDrone1.ImageHeight=240
+# If you want a mirror image, set to 1
+ArDrone.Camera.Mirror=0
+
+
+ArDrone.Pose3D.Endpoints=default -h 0.0.0.0 -p 9998
+ArDrone.Pose3D.Name=ardrone_pose3d
+
+ArDrone.RemoteConfig.Endpoints=default -h 0.0.0.0 -p 9997
+ArDrone.RemoteConfig.Name=ardrone_remoteConfig
+
+ArDrone.Navdata.Endpoints=default -h 0.0.0.0 -p 9996
+ArDrone.Navdata.Name=ardrone_navdata
+
+ArDrone.CMDVel.Endpoints=default -h 0.0.0.0 -p 9995
+ArDrone.CMDVel.Name=ardrone_cmdvel
+
+ArDrone.Extra.Endpoints=default -h 0.0.0.0 -p 9994
+ArDrone.Extra.Name=ardrone_extra
+
+ArDrone.NavdataGPS.Endpoints=default -h 0.0.0.0 -p 9993
+ArDrone.NavdataGPS.Name=ardrone_navdatagps
+
+\end{lstlisting}
+
+Tanto para conectar UAViewer como nuestro adaptador a arDroneServer necesitamos editar los ficheros de configuración de forma que las ips, puertos y nombres de los interfaces de los que deseamos recuperar información coincidan. A continuación podemos ver la configuración del adaptador para poder recuperar imagenes de la camara.
+
+\begin{lstlisting}
+Introrob.Camera.Proxy  = ardrone_camera:default -h 0.0.0.0 -p 9999
+\end{lstlisting}
+
+En la realización del experimento nos encontramos con un problema de red no previsto antes. Dicho problema consiste en que el dron crea una red wifi a la cual debemos conectar nuestro PC para poder comunicarnos con él a través de las herramientas desarrolladas, el problema es que dicha red no presenta conexión a internet por lo cual aunque la conexión con el dron es satisfactoria la comunicación con YouTube no se puede llevar a cabo ya que requiere de conexión a internet.
+
+La solución a este problema es crear dentro del mismo PC dos conexiones de red, una conexión wifi para interactuar con el dron y la otra conexión vía ethernet con acceso a internet.
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=150mm]{realDroneArq.png}
+        \caption{Arquitectura Experimento}
+    \end{figure}
+
+Debido a que JdeRobot se ejecuta bajo el sistema operativo Linux, para conseguir esta configuración de red hemos accedido manualmente a la configuración de red del sistema aportado una dirección pública vía ethernet suministrada por la universidad en la que levantaremos el servidor nodejs de la aplicación mientras que en la segunda red estableceremos una conexión vía wifi con el UAV. 
+
+Una vez realizadas todas las conexiones el experimento se ha llevado a cabo con éxito, este experimento puede verse al completo en la wiki oficial del proyecto \footnote{http://jderobot.org/Apavo-tfg#Fly_with_Real_Drone}
+
