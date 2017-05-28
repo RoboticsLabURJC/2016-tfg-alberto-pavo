@@ -11,54 +11,58 @@ import jderobot
 
 class WorkQueue(threading.Thread):
     def __init__(self):
+        self.callbacks = []
         threading.Thread.__init__(self)
-        self._callbacks = []
-        self._done = False
-        self._cond = threading.Condition()
+       
 
     def run(self):
-        with self._cond:
-            while not self._done:
-                if len(self._callbacks) == 0:
-                    print('No hay tareas')
-                    self._cond.wait()
+        print("run")
+        if not len(self.callbacks) == 0:
+            print("Ejecutando tarea....")
+            print(self.callbacks[0])
+            self.callbacks[0].execute()
+            del self.callbacks[0]
+        else:
+            print("No hay tareas en la cola")
+           
+    def add(self, job):
+        self.callbacks.append(job)
+        print("Tarea Añadida")
+        self.run()
+       
 
-                if not len(self._callbacks) == 0:
+class Job(object):
+   
+    def __init__(self,cb,formato):
+        self.cb = cb
+        self.format = formato
+        self.imageDescription = jderobot.ImageData()
+   
+    def execute(self):
+        print("Ejecutando....")
+        if not self.getData():
+            self.cb.ice_exception(jderobot.Image.DataNotExistException())
+            return
+        print(self.imageDescription)
+        self.cb.ice_response(self.imageDescription)
+        print("Tarea ejecutada")
 
-                    if not self._done:
-                        print ("GetImage")
-                        if os.path.isfile('./image.jpg'):
-                            self.imageDescription = jderobot.ImageData()
-                            self.image= Image.open('./image.jpg')
-                            self.imageDescription.description = getImageDescription()
-                            self.imageDescription.pixeldata = image.bits
-                            return self.imageDescription
-                        self._callbacks[0].future.set_result(None)
-                        del self._callbacks[0]
-
-            for i in range(0, len(self._callbacks)):
-                self._callbacks[i].future.set_exception(Demo.RequestCanceledException())
-
-    def add(self, delay):
-        future = Ice.Future()
-        with self._cond:
-            if not self._done:
-                entry = CallbackEntry(future, delay)
-                if len(self._callbacks) == 0:
-                    self._cond.notify()
-                self._callbacks.append(entry)
-            else:
-               future.set_exception(Demo.RequestCanceledException())
-        return future
-
-    def destroy(self):
-        with self._cond:
-            self._done = True
-            self._cond.notify()
-
+    def getData(self):
+        print("Obteniendo datos...")
+        if os.path.isfile('./image.jpg'):
+            self.imageDescription = jderobot.ImageData()
+            self.image= Image.open('./image.jpg')
+            self.imageDescription.description = ImageProviderI.getImageDescription(self)
+            self.imageDescription.pixeldata = self.image.bits
+            return True
+        else:
+            return False
 
 
 class ImageProviderI(jderobot.Camera):
+
+  def __init__(self,workQueue):
+    self.workQueue = workQueue
 
   def getCameraDescription(self):
     return 0
@@ -68,9 +72,9 @@ class ImageProviderI(jderobot.Camera):
 
   def startCameraStreaming(self):
     return ''
-	
+   
   def stopCameraStreaming(self,current=None):
-    print('--------')
+    print('entraaa')
 
   def reset(self):
     print('---')
@@ -78,47 +82,39 @@ class ImageProviderI(jderobot.Camera):
   def getImageDescription(self,current=None):
 
     self.imageData = jderobot.ImageDescription()
-    print('getImageDescription')    
+    print('getImageDescription')   
     if os.path.isfile('./image.jpg'):
       self.image= Image.open('./image.jpg')
       self.imageData.width = self.image.width
-      self.imageData.height = self.image.heigth
+      self.imageData.height = self.image.height
       self.format = 'RGB'
       return self.imageData
 
-  def getImageData(self,format,current=None):
-    print("Entra")
-    return self._workQueue.add(format)
-		
+  def getImageData_async(self,cb,formato,curren=None):
+    print ("imageData")
+    job = Job(cb,formato)
+    return self.workQueue.add(job)
+       
 
-try:
-	print('Server Started')
-	ic = EasyIce.initialize(sys.argv)
-	prop = ic.getProperties()
-	endpoint = prop.getProperty('youtubeServer.Endpoints')
-	workQueue = WorkQueue()
-	workQueue.start()
-	adapter = ic.createObjectAdapterWithEndpoints("youtubeServer",endpoint) #Properties
-	object = ImageProviderI()
-	adapter.add(object, Ice.stringToIdentity("youtubeServer"))
-	adapter.activate()
-	ic.waitForShutdown()
-	self._workQueue.join()
-
-except:
-	traceback.print_exc()
-	status= 1
-
-if(ic):
-	try:
-		ic.destroy()
-	except:
-		traceback.print_exc()
-		status = 1
-
-sys.exit(status)
+if __name__== "__main__":
+    print('Server Started')
+    ic = EasyIce.initialize(sys.argv)
+    prop = ic.getProperties()
+    endpoint = prop.getProperty('youtubeServer.Endpoints')
+    workQueue = WorkQueue()
+    workQueue.setDaemon(True)
+    workQueue.start()
+    adapter = ic.createObjectAdapterWithEndpoints("youtubeServer",endpoint) #Properties
+    object = ImageProviderI(workQueue)
+    adapter.add(object, Ice.stringToIdentity("youtubeServer"))
+    adapter.activate()
+    workQueue.join()
+    ic.waitForShutdown()
+   
 
 
-	
+
+
+   
 
   
