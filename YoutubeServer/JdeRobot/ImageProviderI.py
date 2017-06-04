@@ -11,13 +11,11 @@ class WorkQueue(threading.Thread):
 
     def run(self):
         if not len(self.callbacks) == 0:
-            print(self.callbacks[0])
             self.callbacks[0].execute()
             del self.callbacks[0]
 			
     def add(self, job):
         self.callbacks.append(job)
-        print("Tarea Añadida")
         self.run()
         
 
@@ -30,9 +28,9 @@ class Job(object):
 	
 	def execute(self):
 		if not self.getData():
-			self.cb.ice_exception(jderobot.Image.DataNotExistException())
+			print("No data")
+			#self.cb.ice_exception(jderobot.Image.DataNotExistException())
 			return
-		print(self.imageDescription)
 		self.cb.ice_response(self.imageDescription)
 
 	def getData(self):

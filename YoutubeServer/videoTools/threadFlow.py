@@ -18,7 +18,6 @@ class ThreadImage(threading.Thread):
 			
 		while(True):
 			self.end_time = self.dataFlow.getVideoDuration()
-			print(type(self.init_time))
 			self.dataFlow.getImage(self.init_time,self.end_time)
 			self.init_time = self.end_time
 

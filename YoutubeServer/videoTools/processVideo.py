@@ -16,7 +16,7 @@ class processVideo():
 	def getImage(self,init_time,end_time):
 		init_time = datetime.strftime(init_time,'%H:%M:%S')
 		end_time = datetime.strftime(end_time,'%H:%M:%S')
-		command =shlex.split("ffmpeg -i output.ts -start_number 0 -vf fps=5 -ss " + init_time + " -to " + end_time + " -f image2 -updatefirst 1 temp.jpg")
+		command =shlex.split("ffmpeg -i output.ts -start_number 0 -vf fps=25 -ss " + init_time + " -to " + end_time + " -f image2 -updatefirst 1 temp.jpg")
 		process= Popen(command,stdout=PIPE,stderr=PIPE)
 	
 	def downloadVideo(self):
