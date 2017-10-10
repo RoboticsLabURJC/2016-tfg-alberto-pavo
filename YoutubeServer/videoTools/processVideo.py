@@ -6,6 +6,9 @@ class processVideo():
 
 	def setURL(self,URL):
 		self.url = URL
+	
+	def setliveBroadcast(self,liveBroadcast):
+		self.liveBroadcast = liveBroadcast
 
 	def setFileList(self):
 		command = shlex.split('youtube-dl -f 92 -g ' + self.url)
@@ -20,9 +23,12 @@ class processVideo():
 		process= Popen(command,stdout=PIPE,stderr=PIPE)
 	
 	def downloadVideo(self):
-		data = self.fileList.splitlines()
-		data= data[0].decode('utf-8')
-		command=shlex.split('ffmpeg -i ' + data + ' -c copy output.ts')
+		if liveBroadcast:
+			data = self.fileList.splitlines()
+			data= data[0].decode('utf-8')
+			command=shlex.split('ffmpeg -i ' + data + ' -c copy output.ts')
+		else:
+			command=shlex.split('ffmpeg -i ' + self.url + ' -c copy output.ts')
 		process= Popen(command,stdout=PIPE,stderr=PIPE)
 
 	def changeName(self):
