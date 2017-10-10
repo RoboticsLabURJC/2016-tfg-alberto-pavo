@@ -16,12 +16,14 @@ if __name__== "__main__":
 		prop = ic.getProperties()
 		endpoint = prop.getProperty('youtubeServer.Endpoints')
 		URL = prop.getProperty('URL')
+		liveBroadcast = prop.getProperty('liveBroadcast')
 		print(endpoint)
 		workQueue = WorkQueue()
 		workQueue.setDaemon(True)
 		dataFlow = processVideo()
 		dataFlow.setURL(URL)
-		dataFlow.setFileList()
+		if liveBroadcast :
+			dataFlow.setFileList()
 
 		downloadThread = ThreadDownload(dataFlow)
 		imageThread = ThreadImage(dataFlow)
