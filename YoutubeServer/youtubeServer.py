@@ -7,8 +7,6 @@ from videoTools.processVideo import processVideo
 from videoTools.threadFlow import ThreadImage,ThreadDownload,ThreadChangeName
 from JdeRobot.ImageProviderI import ImageProviderI,WorkQueue
 
-
-
 if __name__== "__main__":
 
 	try:
@@ -18,17 +16,17 @@ if __name__== "__main__":
 		URL = prop.getProperty('URL')
 		liveBroadcast = prop.getProperty('liveBroadcast')
 		print(endpoint)
+
 		workQueue = WorkQueue()
 		workQueue.setDaemon(True)
+
 		dataFlow = processVideo()
 		dataFlow.setURL(URL)
-		if liveBroadcast :
-			dataFlow.setFileList()
+		dataFlow.setFileList()
 
 		downloadThread = ThreadDownload(dataFlow)
 		imageThread = ThreadImage(dataFlow)
 		nameThread = ThreadChangeName(dataFlow)
-
 		downloadThread.start()
 		imageThread.start()
 		nameThread.start()
@@ -41,7 +39,6 @@ if __name__== "__main__":
 		workQueue.join()
 		print('esperar a cierre')
 		ic.waitForShutdown()
+
 	except KeyboardInterrupt:
 		sys.exit()        
-
-  
