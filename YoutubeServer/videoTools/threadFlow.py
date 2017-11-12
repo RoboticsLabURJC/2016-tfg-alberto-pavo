@@ -12,7 +12,6 @@ class ThreadImage(threading.Thread):
 		threading.Thread.__init__(self)
 
 	def run(self):
-		print("Getting Images")
 		while not os.path.isfile('./output.ts'):
 			time.sleep(1)
 			
@@ -32,7 +31,7 @@ class ThreadDownload(threading.Thread):
 		threading.Thread.__init__(self)
 
 	def run(self):
-		print("Download Started")
+		print "Download Started"
 		self.dataFlow.downloadVideo()
 
 class ThreadChangeName(threading.Thread):

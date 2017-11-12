@@ -28,8 +28,7 @@ class Job(object):
 	
 	def execute(self):
 		if not self.getData():
-			print("No data")
-			#self.cb.ice_exception(jderobot.Image.DataNotExistException())
+			print "No data"
 			return
 		self.cb.ice_response(self.imageDescription)
 

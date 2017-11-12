@@ -1,25 +1,28 @@
 import Ice
 import sys
 import JdeRobot
+import config
+import comm
 from PIL import Image
 from easyiceconfig import easyiceconfig as EasyIce
 from videoTools.processVideo import processVideo
 from videoTools.threadFlow import ThreadImage,ThreadDownload,ThreadChangeName
 from JdeRobot.ImageProviderI import ImageProviderI,WorkQueue
 
+
+
 if __name__== "__main__":
 
 	try:
-		ic = EasyIce.initialize(sys.argv)
-		prop = ic.getProperties()
-		endpoint = prop.getProperty('youtubeServer.Endpoints')
-		URL = prop.getProperty('URL')
-		liveBroadcast = prop.getProperty('liveBroadcast')
-		print(endpoint)
-
+		cfg = config.load(sys.argv[1])
+		jdrc = comm.init(cfg,"youtubeServer")
+		ic = jdrc.getIc()
+		endpoint = cfg.getProperty("youtubeServer.ImageSrv.Proxy")
+		URL = cfg.getProperty("youtubeServer.ImageSrv.URL")
+		liveBroadcast = cfg.getProperty("youtubeServer.ImageSrv.LiveBroadcast")
+		print endpoint
 		workQueue = WorkQueue()
 		workQueue.setDaemon(True)
-
 		dataFlow = processVideo()
 		dataFlow.setURL(URL)
 		dataFlow.setFileList()
@@ -27,6 +30,7 @@ if __name__== "__main__":
 		downloadThread = ThreadDownload(dataFlow)
 		imageThread = ThreadImage(dataFlow)
 		nameThread = ThreadChangeName(dataFlow)
+
 		downloadThread.start()
 		imageThread.start()
 		nameThread.start()
@@ -37,8 +41,7 @@ if __name__== "__main__":
 		adapter.add(object, Ice.stringToIdentity("youtubeServer"))
 		adapter.activate()
 		workQueue.join()
-		print('esperar a cierre')
+		print 'esperar a cierre'
 		ic.waitForShutdown()
-
 	except KeyboardInterrupt:
 		sys.exit()        
